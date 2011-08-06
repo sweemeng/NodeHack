@@ -1,5 +1,5 @@
 NodeHack02/node_modules/*
-NodeHack02/socket-io-workshop/.bin/
 NodeHack02/express-workshop/node_modules/*
-NodeHack02/socket-io-workshop/node_modules/*
+NodeHack02/chucknorris/.bin/
+NodeHack02/chucknorris/node_modules/*
 .*.swp
