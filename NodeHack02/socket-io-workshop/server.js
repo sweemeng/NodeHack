@@ -34,18 +34,15 @@ server.get('/', function(req, res) {
     res.render('index.html');
 });
 
-server.get('/about', function(req, res) {
-    res.render('about.html');
-});
-
 // Socket.IO configuration
-sockServer.configure(function socket() {
+sockServer.configure(function() {
     sockServer.set('authorization', function(handshake, callback) {
+        console.log(handshake);
         callback(null, true);
     });
 });
 
-sockServer.sockets.on('connection', function onConnect(socket) {
+sockServer.sockets.on('connection', function(socket) {
     // set up a nickname
     socket.on('nickname', function onNickname(nickname) {
         socket.set('nickname', nickname, function onResponse() {
@@ -55,13 +52,15 @@ sockServer.sockets.on('connection', function onConnect(socket) {
         });
     });
 
-    socket.on('message', function onMessage(message) {
-        socket.get('nickname', function onResponse(err, nickname) {
+    socket.on('message', function(message) {
+        socket.get('nickname', function(err, nickname) {
+            var data;
+
             if (err) {
                 throw err;
             }
 
-            var data = {
+            data = {
                 from    : nickname,
                 message : message
             };
@@ -73,24 +72,9 @@ sockServer.sockets.on('connection', function onConnect(socket) {
             socket.broadcast.send(data);
         });
     });
-
-    socket.on('disconnect', function onDisconnect() {
-        socket.get('nickname', function onResponse(err, nickname) {
-            if (err) {
-                throw err;
-            }
-
-            sockServer.sockets.send({
-                from    : 'SERVER',
-                message : nickname + ' has disconnected.'
-            });
-        });
-    });
 });
 
 // start listening
 server.listen(options.port, options.host, function() {
-    var o = this.address();
-
-    console.log('Running on http://%s:%d ...', o.address, o.port);
+    console.log('Running on http://%s:%d ...', options.host, options.port);
 });
